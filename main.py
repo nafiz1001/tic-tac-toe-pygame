@@ -2,27 +2,30 @@ import sys, pygame
 
 pygame.init()
 
-size = width, height = 320, 240
-speed = [2, 2]
-black = 0, 0, 0
+size = width, height = 500, 500
 
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Bouncing ball")
+pygame.display.set_caption("Tic-Tac-Toe")
 
-ballrect = pygame.rect.Rect(0, 0, screen.get_height() / 10, screen.get_height() / 10)
 
-while 1:
+def draw_grid(surface):
+    cellrect = pygame.rect.Rect(0, 0, width / 3, height / 3)
+
+    for y in range(3):
+        for x in range(3):
+            cellrect.size = (width / 3, height / 3)
+            cellrect.topleft = (x * cellrect.width, y * cellrect.height)
+            pygame.draw.rect(surface, 0x000000, cellrect)
+            cellrect.inflate_ip(-2, -2)
+            pygame.draw.rect(surface, 0x777777, cellrect)
+
+
+draw_grid(screen)
+
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
 
-    ballrect = ballrect.move(speed)
-    if ballrect.left < 0 or ballrect.right > width:
-        speed[0] = -speed[0]
-    if ballrect.top < 0 or ballrect.bottom > height:
-        speed[1] = -speed[1]
-
-    screen.fill(black)
-    pygame.draw.circle(screen, (0xFF, 0, 0), ballrect.center, ballrect.height)
     pygame.display.flip()
     pygame.time.wait(10)
