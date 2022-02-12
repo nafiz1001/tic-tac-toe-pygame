@@ -32,6 +32,10 @@ def draw_symbol(x: int, y: int, symbol: str):
     screen.blit(SYMBOLS[symbol], textpos)
 
 
+def draw_line(a: tuple[int, int], b: tuple[int, int]):
+    pygame.draw.line(screen, 0x00FF00, cell_to_pos(*a), cell_to_pos(*b), 5)
+
+
 def draw_grid(surface):
     cellrect = pygame.rect.Rect(0, 0, cellwidth, cellheight)
 
@@ -51,10 +55,15 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONUP:
-            cellpos = pos_to_cell(*pygame.mouse.get_pos())
-            symbol = ttt.curr_player()
-            if ttt.play(*cellpos):
-                draw_symbol(*cellpos, symbol)
+            if not ttt.game_over():
+                cellpos = pos_to_cell(*pygame.mouse.get_pos())
+                symbol = ttt.curr_player()
+                if ttt.play(*cellpos):
+                    draw_symbol(*cellpos, symbol)
+                    res = ttt.game_over()
+                    if res:
+                        winner, pos = res
+                        draw_line(pos[0], pos[-1])
         if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             ttt.reset()
             draw_grid(screen)
