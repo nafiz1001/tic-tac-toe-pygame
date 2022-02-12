@@ -13,8 +13,8 @@ pygame.display.set_caption("Tic-Tac-Toe")
 
 font = pygame.font.Font(None, int(min(cellwidth, cellheight)))
 SYMBOLS = {
-    tictactoe.TicTacToe.X: font.render("X", True, (0, 0, 0xFF)),
-    tictactoe.TicTacToe.O: font.render("O", True, (0xFF, 0, 0)),
+    tictactoe.X: font.render("X", True, (0, 0, 0xFF)),
+    tictactoe.O: font.render("O", True, (0xFF, 0, 0)),
 }
 
 
