@@ -41,7 +41,7 @@ def draw_grid(surface):
 
     for y in range(3):
         for x in range(3):
-            cellrect.size = (cellwidth, cellheight)
+            cellrect.size = cellsize
             cellrect.topleft = (x * cellrect.width, y * cellrect.height)
             pygame.draw.rect(surface, 0x000000, cellrect)
             cellrect.inflate_ip(-2, -2)
