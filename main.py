@@ -24,13 +24,11 @@ def pos_to_cell(x: int, y: int):
 
 
 def cell_to_pos(x: int, y: int):
-    (x * cellwidth, y * cellheight)
+    return (cellwidth * (x + 0.5), cellheight * (y + 0.5))
 
 
 def draw_symbol(x: int, y: int, symbol: str):
-    textpos = SYMBOLS[symbol].get_rect(
-        centerx=cellwidth * (x + 0.5), centery=cellheight * (y + 0.5)
-    )
+    textpos = SYMBOLS[symbol].get_rect(center=cell_to_pos(x, y))
     screen.blit(SYMBOLS[symbol], textpos)
 
 
