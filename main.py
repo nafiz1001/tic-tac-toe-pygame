@@ -55,12 +55,12 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONUP:
-            if not ttt.game_over():
+            if not ttt.winner():
                 cellpos = pos_to_cell(*pygame.mouse.get_pos())
                 symbol = ttt.curr_player()
                 if ttt.play(*cellpos):
                     draw_symbol(*cellpos, symbol)
-                    res = ttt.game_over()
+                    res = ttt.winner()
                     if res:
                         winner, pos = res
                         draw_line(pos[0], pos[-1])
