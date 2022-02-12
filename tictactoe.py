@@ -27,6 +27,9 @@ class TicTacToe:
             self.turn = (self.turn + 1) % len(PLAYERS)
             return True
 
+    def draw(self):
+        return not self.winner() and all(s for s in self.state.values())
+
     def winner(self):
         def helper(points: list[tuple[int, int]]):
             states = [self.state[p] for p in points]
