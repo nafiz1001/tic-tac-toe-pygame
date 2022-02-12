@@ -7,7 +7,7 @@ pygame.init()
 
 size = width, height = 500, 500
 cellsize = cellwidth, cellheight = width / 3, height / 3
-cellmin = min(cellwidth, cellheight)
+cellmin = min(cellsize)
 
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Tic-Tac-Toe")
