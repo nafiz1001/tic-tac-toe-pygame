@@ -7,15 +7,31 @@ pygame.init()
 
 size = width, height = 500, 500
 cellsize = cellwidth, cellheight = width / 3, height / 3
+cellmin = min(cellwidth, cellheight)
 
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Tic-Tac-Toe")
 
-font = pygame.font.Font(None, int(min(cellwidth, cellheight)))
+font = pygame.font.Font(None, int(cellmin))
 SYMBOLS = {
     tictactoe.X: font.render("X", True, (0, 0, 0xFF)),
     tictactoe.O: font.render("O", True, (0xFF, 0, 0)),
 }
+
+
+def pos_to_cell(x: int, y: int):
+    return x // cellwidth, y // cellheight
+
+
+def cell_to_pos(x: int, y: int):
+    (x * cellwidth, y * cellheight)
+
+
+def draw_symbol(x: int, y: int, symbol: str):
+    textpos = SYMBOLS[symbol].get_rect(
+        centerx=cellwidth * (x + 0.5), centery=cellheight * (y + 0.5)
+    )
+    screen.blit(SYMBOLS[symbol], textpos)
 
 
 def draw_grid(surface):
@@ -37,14 +53,10 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONUP:
-            pos = pygame.mouse.get_pos()
-            pos = (pos[0] // cellwidth, pos[1] // cellheight)
-            curr_player = ttt.curr_player()
-            if ttt.play(*pos):
-                textpos = SYMBOLS[curr_player].get_rect(
-                    x=pos[0] * cellwidth, y=pos[1] * cellheight
-                )
-                screen.blit(SYMBOLS[curr_player], textpos)
+            cellpos = pos_to_cell(*pygame.mouse.get_pos())
+            symbol = ttt.curr_player()
+            if ttt.play(*cellpos):
+                draw_symbol(*cellpos, symbol)
         if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             ttt.reset()
             draw_grid(screen)
