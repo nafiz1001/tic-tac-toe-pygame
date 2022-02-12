@@ -1,7 +1,9 @@
 import sys, pygame
 import tictactoe
+import ai
 
 ttt = tictactoe.TicTacToe()
+tttai = ai.TicTacToeAI(ttt, tictactoe.X)
 
 pygame.init()
 
@@ -52,22 +54,31 @@ def draw_grid(surface):
 draw_grid(screen)
 
 while True:
+    mouseup = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.MOUSEBUTTONUP:
-            if not ttt.winner():
-                cellpos = pos_to_cell(*pygame.mouse.get_pos())
-                symbol = ttt.curr_player()
-                if ttt.play(*cellpos):
-                    draw_symbol(*cellpos, symbol)
-                    res = ttt.winner()
-                    if res:
-                        winner, pos = res
-                        draw_line(pos[0], pos[-1])
+            mouseup = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             ttt.reset()
             draw_grid(screen)
+
+        if not ttt.winner():
+            symbol = ttt.curr_player()
+            cellpos = None
+
+            if symbol == tictactoe.O and mouseup:
+                cellpos = pos_to_cell(*pygame.mouse.get_pos())
+            elif symbol == tictactoe.X:
+                cellpos = tttai.play()
+
+            if cellpos and ttt.play(*cellpos):
+                draw_symbol(*cellpos, symbol)
+                res = ttt.winner()
+                if res:
+                    winner, pos = res
+                    draw_line(pos[0], pos[-1])
 
     pygame.display.flip()
     pygame.time.wait(10)
