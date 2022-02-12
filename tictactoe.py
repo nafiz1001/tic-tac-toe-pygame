@@ -6,8 +6,11 @@ PLAYERS = [X, O]
 
 
 class TicTacToe:
-    def __init__(self):
+    def __init__(self, ttt: "TicTacToe" = None):
         self.reset()
+        if ttt:
+            self.state.update(ttt.state)
+            self.turn = ttt.turn
 
     def reset(self):
         self.state = {(x, y): "" for y in range(3) for x in range(3)}
