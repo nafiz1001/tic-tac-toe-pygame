@@ -28,8 +28,9 @@ def cell_to_pos(x: int, y: int):
 
 
 def draw_symbol(x: int, y: int, symbol: str):
-    textpos = SYMBOLS[symbol].get_rect(center=cell_to_pos(x, y))
-    screen.blit(SYMBOLS[symbol], textpos)
+    src = SYMBOLS[symbol]
+    rect = src.get_rect(center=cell_to_pos(x, y))
+    screen.blit(src, rect)
 
 
 def draw_line(a: tuple[int, int], b: tuple[int, int]):
