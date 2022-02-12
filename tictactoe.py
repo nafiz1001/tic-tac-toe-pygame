@@ -11,7 +11,7 @@ class TicTacToe:
 
     def reset(self):
         self.state = {(x, y): "" for y in range(3) for x in range(3)}
-        self.turn = random.randint(0, len(PLAYERS) - 1)
+        self.turn = 0
 
     def curr_player(self):
         return PLAYERS[self.turn]
