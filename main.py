@@ -3,8 +3,8 @@ import tictactoe
 import ai
 import random
 
-ttt = tictactoe.TicTacToe()
-tttai = ai.TicTacToeAI(ttt, random.choice(tictactoe.PLAYERS))
+ttt = tictactoe.TicTacToe.new()
+tttai = ai.TicTacToeAI(random.choice(tictactoe.PLAYERS))
 
 pygame.init()
 
@@ -62,7 +62,7 @@ while True:
         if event.type == pygame.MOUSEBUTTONUP:
             mouseup = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-            ttt.reset()
+            ttt = tictactoe.TicTacToe.new()
             tttai.symbol = random.choice(tictactoe.PLAYERS)
             draw_grid(screen)
 
@@ -73,14 +73,17 @@ while True:
             if symbol != tttai.symbol and mouseup:
                 cellpos = pos_to_cell(*pygame.mouse.get_pos())
             elif symbol == tttai.symbol:
-                cellpos = tttai.play()
+                cellpos = tttai.play(ttt)
 
-            if cellpos and ttt.play(*cellpos):
-                draw_symbol(*cellpos, symbol)
-                res = ttt.curr_state()
-                if isinstance(res, tictactoe.TicTacToe.Win):
-                    for points in res.strats:
-                        draw_line(points[0], points[-1])
+            if cellpos:
+                newttt = ttt.play(*cellpos)
+                if newttt is not ttt:
+                    ttt = newttt
+                    draw_symbol(*cellpos, symbol)
+                    res = ttt.curr_state()
+                    if isinstance(res, tictactoe.TicTacToe.Win):
+                        for points in res.strats:
+                            draw_line(points[0], points[-1])
 
     pygame.display.flip()
     pygame.time.wait(10)
