@@ -9,7 +9,7 @@ class TicTacToeAI:
 
     def play(self):
         if self.ttt.curr_player() == self.symbol:
-            state = self.ttt.state
+            state = self.ttt.curr_board()
             open_points = [k for k in state if not state[k]]
 
             if open_points:
@@ -24,15 +24,14 @@ class TicTacToeAI:
 
                         random.shuffle(remaining_points)
                         for rp in remaining_points:
-                            res = newttt.winner()
-                            if res:
-                                winner, _ = res
-                                if winner == self.symbol:
+                            res = newttt.curr_state()
+                            if isinstance(res, tictactoe.TicTacToe.Win):
+                                if res.player == self.symbol:
                                     evaluation += 1
                                 else:
                                     evaluation -= 2
                                 break
-                            elif newttt.draw():
+                            elif isinstance(res, tictactoe.TicTacToe.Draw):
                                 break
 
                             newttt.play(*rp)

@@ -66,7 +66,7 @@ while True:
             tttai.symbol = random.choice(tictactoe.PLAYERS)
             draw_grid(screen)
 
-        if not ttt.winner():
+        if isinstance(ttt.curr_state(), tictactoe.TicTacToe.InProgress):
             symbol = ttt.curr_player()
             cellpos = None
 
@@ -77,10 +77,10 @@ while True:
 
             if cellpos and ttt.play(*cellpos):
                 draw_symbol(*cellpos, symbol)
-                res = ttt.winner()
-                if res:
-                    winner, pos = res
-                    draw_line(pos[0], pos[-1])
+                res = ttt.curr_state()
+                if isinstance(res, tictactoe.TicTacToe.Win):
+                    for points in res.strats:
+                        draw_line(points[0], points[-1])
 
     pygame.display.flip()
     pygame.time.wait(10)
