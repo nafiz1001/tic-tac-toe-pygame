@@ -27,9 +27,9 @@ class TicTacToeAI:
                             res = newttt.curr_state()
                             if isinstance(res, tictactoe.TicTacToe.Win):
                                 if res.player == self.symbol:
-                                    evaluation += 1
+                                    evaluation += len(res.strats)
                                 else:
-                                    evaluation -= 2
+                                    evaluation -= len(res.strats)
                                 break
                             elif isinstance(res, tictactoe.TicTacToe.Draw):
                                 break
