@@ -72,9 +72,9 @@ class TicTacToe:
                     count = states.count(states[0])
                     if count == 3:
                         if isinstance(newttt.state, TicTacToe.Win):
-                            newttt.state.strats.append(list(points))
+                            newttt.state.strats.append(points)
                         else:
-                            newttt.state = TicTacToe.Win(states[0], [list(points)])
+                            newttt.state = TicTacToe.Win(states[0], [points])
 
             if isinstance(newttt.state, TicTacToe.InProgress):
                 if all(s for s in newttt.board.values()):
@@ -97,7 +97,7 @@ class TicTacToe:
             self.strats = strats
 
         def copy(self):
-            return TicTacToe.Win(self.player, list(self.strats))
+            return self
 
     class Draw:
         def __init__(self) -> None:
