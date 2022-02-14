@@ -23,9 +23,7 @@ class TicTacToeAI:
                         for a, b in zip(indices[:-1], indices[1:]):
                             path[a], path[b] = path[b], path[a]
 
-                        newttt = functools.reduce(
-                            lambda newttt, p: newttt.play(*p), path, ttt
-                        )
+                        newttt = functools.reduce(tictactoe.TicTacToe.play, path, ttt)
 
                         res = newttt.curr_state()
                         if isinstance(res, tictactoe.TicTacToe.Win):

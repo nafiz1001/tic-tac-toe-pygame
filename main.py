@@ -76,7 +76,7 @@ while True:
                 cellpos = tttai.play(ttt)
 
             if cellpos:
-                newttt = ttt.play(*cellpos)
+                newttt = ttt.play(cellpos)
                 if newttt is not ttt:
                     ttt = newttt
                     draw_symbol(*cellpos, symbol)

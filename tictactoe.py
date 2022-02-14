@@ -58,15 +58,15 @@ class TicTacToe:
     def curr_state(self):
         return self.state
 
-    def play(self, x: int, y: int):
-        if self.board[(x, y)] in PLAYERS:
+    def play(self, target: tuple[int, int]):
+        if self.board[target] in PLAYERS:
             return self
         elif not isinstance(self.state, TicTacToe.InProgress):
             return self
         else:
             newttt = TicTacToe(**self.__dict())
-            newttt.board[(x, y)] = newttt.curr_player()
-            for points in STRATS[(x, y)]:
+            newttt.board[target] = newttt.curr_player()
+            for points in STRATS[target]:
                 states = [newttt.board[p] for p in points]
                 if states[0] in PLAYERS:
                     count = states.count(states[0])
