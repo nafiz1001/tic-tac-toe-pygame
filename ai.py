@@ -14,14 +14,17 @@ class TicTacToeAI:
 
             if open_points:
                 evaluations = [0] * len(open_points)
+                indices = list(range(1, len(evaluations)))
+
                 for i, op in enumerate(open_points):
+                    path = [op] + [p for p in open_points if p != op]
                     for _ in range(50):
-                        remaining_points = [p for p in open_points if p != op]
-                        random.shuffle(remaining_points)
-                        remaining_points = [op] + remaining_points
+                        random.shuffle(indices)
+                        for a, b in zip(indices[:-1], indices[1:]):
+                            path[a], path[b] = path[b], path[a]
 
                         newttt = functools.reduce(
-                            lambda newttt, p: newttt.play(*p), remaining_points, ttt
+                            lambda newttt, p: newttt.play(*p), path, ttt
                         )
 
                         res = newttt.curr_state()
