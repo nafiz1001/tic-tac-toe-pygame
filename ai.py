@@ -18,7 +18,7 @@ class TicTacToeAI:
 
                 for i, op in enumerate(open_points):
                     path = [op] + [p for p in open_points if p != op]
-                    for _ in range(50):
+                    for _ in range(100):
                         random.shuffle(indices)
                         for a, b in zip(indices[:-1], indices[1:]):
                             path[a], path[b] = path[b], path[a]
