@@ -37,9 +37,7 @@ class TicTacToe:
         self.__prev_point = prev_point
         self.__prev_player = prev_player
         self.__curr_player = [s for s in PLAYERS if s != self.__prev_player][0]
-        self.__state: typing.Union[
-            "TicTacToe.InProgress", "TicTacToe.Draw", "TicTacToe.Win"
-        ] = TicTacToe.InProgress()
+        self.__state = TicTacToe.InProgress()
 
         if self.__prev_ttt and self.__prev_point and self.__prev_player:
             board = self.curr_board()
