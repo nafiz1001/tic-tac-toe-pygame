@@ -52,8 +52,8 @@ class TicTacToe:
                             self.__state.strats.append(strat)
                         else:
                             self.__state = TicTacToe.Win(states[0], [strat])
-            if not isinstance(self.__state, TicTacToe.Win) and sum(
-                1 for s in board if board[s] != EMPTY_CELL
+            if isinstance(self.__state, TicTacToe.InProgress) and all(
+                board[p] != EMPTY_CELL for p in board
             ) == len(board):
                 self.__state = TicTacToe.Draw()
 
