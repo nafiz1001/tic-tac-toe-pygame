@@ -36,7 +36,7 @@ class TicTacToe:
         self.__prev_ttt = prev_ttt
         self.__prev_point = prev_point
         self.__prev_player = prev_player
-        self.__curr_player = [s for s in PLAYERS if s != prev_player][0]
+        self.__curr_player = [s for s in PLAYERS if s != self.__prev_player][0]
         self.__state: typing.Union[
             "TicTacToe.InProgress", "TicTacToe.Draw", "TicTacToe.Win"
         ] = TicTacToe.InProgress()
@@ -65,15 +65,16 @@ class TicTacToe:
             EMPTY_CELL,
         )
 
-    def curr_board(self):
-        def aux():
-            ttt = self
-            while ttt and ttt.__prev_point and ttt.__prev_player:
-                yield (ttt.__prev_point, ttt.__prev_player)
-                ttt = ttt.__prev_ttt
+    def rev_path(self):
+        ttt = self
+        while ttt and ttt.__prev_point and ttt.__prev_player:
+            yield ttt
+            ttt = ttt.__prev_ttt
 
+    def curr_board(self):
         board = dict(EMPTY_BOARD)
-        board.update(aux())
+        board.update({ttt.__prev_point: ttt.__curr_player for ttt in self.rev_path()})
+
         return board
 
     def curr_player(self):
