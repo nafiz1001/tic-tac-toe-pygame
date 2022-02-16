@@ -1,9 +1,12 @@
 import typing
 
-X = "x"
-O = "o"
-EMPTY = ""
+SymbolType = int
+EMPTY_CELL: SymbolType = 0
+X: SymbolType = 1
+O: SymbolType = 2
 PLAYERS = [X, O]
+
+EMPTY_BOARD = {(x, y): EMPTY_CELL for y in range(3) for x in range(3)}
 
 WINNING_STRATS = (
     # horizontal
@@ -26,82 +29,79 @@ STRATS = {
 class TicTacToe:
     def __init__(
         self,
-        board: dict[tuple[int, int], str],
-        state: typing.Union["TicTacToe.InProgress", "TicTacToe.Draw", "TicTacToe.Win"],
-        turn: int,
+        prev_ttt: typing.Union["TicTacToe", None],
+        prev_point: tuple[int, int] | None,
+        prev_player: SymbolType,
     ):
-        self.board = board
-        self.state = state
-        self.turn = turn
+        self.__prev_ttt = prev_ttt
+        self.__prev_point = prev_point
+        self.__prev_player = prev_player
+        self.__curr_player = [s for s in PLAYERS if s != prev_player][0]
+        self.__state: typing.Union[
+            "TicTacToe.InProgress", "TicTacToe.Draw", "TicTacToe.Win"
+        ] = TicTacToe.InProgress()
+
+        if self.__prev_ttt and self.__prev_point and self.__prev_player:
+            board = self.curr_board()
+            for strat in STRATS[self.__prev_point]:
+                states = [board[p] for p in strat]
+                if states[0] in PLAYERS:
+                    count = states.count(states[0])
+                    if count == 3:
+                        if isinstance(self.__state, TicTacToe.Win):
+                            self.__state.strats.append(strat)
+                        else:
+                            self.__state = TicTacToe.Win(states[0], [strat])
+            if not isinstance(self.__state, TicTacToe.Win) and sum(
+                1 for s in board if board[s] != EMPTY_CELL
+            ) == len(board):
+                self.__state = TicTacToe.Draw()
 
     @staticmethod
     def new():
         return TicTacToe(
-            {(x, y): EMPTY for y in range(3) for x in range(3)},
-            TicTacToe.InProgress(),
-            0,
+            None,
+            None,
+            EMPTY_CELL,
         )
 
-    def __dict(self):
-        return {
-            "board": dict(self.board),
-            "state": self.state.copy(),
-            "turn": self.turn,
-        }
-
     def curr_board(self):
-        return self.board.items()
+        def aux():
+            ttt = self
+            while ttt and ttt.__prev_point and ttt.__prev_player:
+                yield (ttt.__prev_point, ttt.__prev_player)
+                ttt = ttt.__prev_ttt
+
+        board = dict(EMPTY_BOARD)
+        board.update(aux())
+        return board
 
     def curr_player(self):
-        return PLAYERS[self.turn]
+        return self.__curr_player
 
     def curr_state(self):
-        return self.state
+        return self.__state
 
     def play(self, target: tuple[int, int]):
-        if self.board[target] in PLAYERS:
+        board = self.curr_board()
+        if board[target] in PLAYERS:
             return self
-        elif not isinstance(self.state, TicTacToe.InProgress):
+        elif not isinstance(self.__state, TicTacToe.InProgress):
             return self
         else:
-            newttt = TicTacToe(**self.__dict())
-            newttt.board[target] = newttt.curr_player()
-            for points in STRATS[target]:
-                states = [newttt.board[p] for p in points]
-                if states[0] in PLAYERS:
-                    count = states.count(states[0])
-                    if count == 3:
-                        if isinstance(newttt.state, TicTacToe.Win):
-                            newttt.state.strats.append(points)
-                        else:
-                            newttt.state = TicTacToe.Win(states[0], [points])
-
-            if isinstance(newttt.state, TicTacToe.InProgress):
-                if all(s for s in newttt.board.values()):
-                    newttt.state = TicTacToe.Draw()
-                else:
-                    newttt.turn = (newttt.turn + 1) % len(PLAYERS)
-
-            return newttt
+            return TicTacToe(self, target, self.curr_player())
 
     class InProgress:
         def __init__(self) -> None:
             pass
 
-        def copy(self):
-            return self
-
     class Win:
-        def __init__(self, player: str, strats: list[list[tuple[int, int]]]) -> None:
+        def __init__(
+            self, player: SymbolType, strats: list[list[tuple[int, int]]]
+        ) -> None:
             self.player = player
             self.strats = strats
-
-        def copy(self):
-            return self
 
     class Draw:
         def __init__(self) -> None:
             pass
-
-        def copy(self):
-            return self
