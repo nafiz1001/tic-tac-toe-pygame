@@ -4,7 +4,8 @@ import ai
 import random
 
 ttt = tictactoe.TicTacToe.new()
-tttai = ai.TicTacToeAI(random.choice(tictactoe.PLAYERS))
+tttai = ai.TicTacToeAI()
+tttai_symbol = random.choice(tictactoe.PLAYERS)
 
 pygame.init()
 
@@ -63,16 +64,16 @@ while True:
             mouseup = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
             ttt = tictactoe.TicTacToe.new()
-            tttai.symbol = random.choice(tictactoe.PLAYERS)
+            tttai_symbol = random.choice(tictactoe.PLAYERS)
             draw_grid(screen)
 
         if isinstance(ttt.curr_state(), tictactoe.TicTacToe.InProgress):
             symbol = ttt.curr_player()
             cellpos = None
 
-            if symbol != tttai.symbol and mouseup:
+            if symbol != tttai_symbol and mouseup:
                 cellpos = pos_to_cell(*pygame.mouse.get_pos())
-            elif symbol == tttai.symbol:
+            elif symbol == tttai_symbol:
                 cellpos = tttai.play(ttt)
 
             if cellpos:
