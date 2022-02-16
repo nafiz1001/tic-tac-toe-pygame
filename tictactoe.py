@@ -50,7 +50,7 @@ class TicTacToe:
         }
 
     def curr_board(self):
-        return self.board
+        return self.board.items()
 
     def curr_player(self):
         return PLAYERS[self.turn]

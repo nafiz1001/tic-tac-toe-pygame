@@ -9,8 +9,7 @@ class TicTacToeAI:
 
     def play(self, ttt: tictactoe.TicTacToe):
         symbol = ttt.curr_player()
-        state = ttt.curr_board()
-        open_points = [k for k in state if not state[k]]
+        open_points = [p for p, s in ttt.curr_board() if not s]
 
         if open_points:
             evaluations = [0] * len(open_points)
