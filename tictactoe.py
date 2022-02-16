@@ -65,7 +65,7 @@ class TicTacToe:
 
     def rev_path(self):
         ttt = self
-        while ttt and ttt.__prev_point and ttt.__prev_player:
+        while ttt and ttt.__prev_point and ttt.__prev_player != EMPTY_CELL:
             yield ttt
             ttt = ttt.__prev_ttt
 
