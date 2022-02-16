@@ -39,7 +39,7 @@ class TicTacToe:
         self.__curr_player = [X, O, X][self.__prev_player]
         self.__state = TicTacToe.InProgress()
 
-        if self.__prev_ttt and self.__prev_point and self.__prev_player:
+        if self.__prev_ttt and self.__prev_point and self.__prev_player != EMPTY_CELL:
             board = self.curr_board()
             for strat in STRATS[self.__prev_point]:
                 states = [board[p] for p in strat]
