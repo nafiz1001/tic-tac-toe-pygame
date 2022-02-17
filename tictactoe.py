@@ -1,4 +1,6 @@
 import typing
+from collections.abc import Callable, Sequence
+import game
 
 SymbolType = int
 EMPTY_CELL = SymbolType(0)
@@ -26,13 +28,15 @@ STRATS = {
 }
 
 
-class TicTacToe:
+class TicTacToe(game.Game):
     def __init__(
         self,
         prev_ttt: typing.Union["TicTacToe", None],
         prev_point: tuple[int, int] | None,
         prev_player: SymbolType,
     ):
+        super().__init__()
+
         self.__prev_ttt = prev_ttt
         self.__prev_point = prev_point
         self.__prev_player = prev_player
@@ -99,6 +103,31 @@ class TicTacToe:
             return self
         else:
             return TicTacToe(self, target, self.curr_player())
+
+    def procedures(self) -> typing.Iterable[Callable[[], "TicTacToe"]]:
+        def procedure(p):
+            def execute():
+                return self.play(p)
+
+            return execute
+
+        if isinstance(self.curr_state(), TicTacToe.InProgress):
+            for p, s in self.curr_board().items():
+                if s == EMPTY_CELL:
+                    yield procedure(p)
+
+    def evaluation_index(self) -> int:
+        return self.curr_player() - 1
+
+    def evaluation(self) -> Sequence[int]:
+        state = self.curr_state()
+        if isinstance(state, TicTacToe.Win):
+            if state.player == X:
+                return (len(state.strats), -len(state.strats))
+            else:
+                return (-len(state.strats), len(state.strats))
+        else:
+            return (0, 0)
 
     class InProgress:
         def __init__(self) -> None:
