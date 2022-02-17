@@ -1,6 +1,6 @@
-import typing
 from collections.abc import Callable, Sequence
-import game
+from typing import Iterable, Union
+from game import Game
 
 SymbolType = int
 EMPTY_CELL = SymbolType(0)
@@ -28,10 +28,10 @@ STRATS = {
 }
 
 
-class TicTacToe(game.Game):
+class TicTacToe(Game):
     def __init__(
         self,
-        prev_ttt: typing.Union["TicTacToe", None],
+        prev_ttt: Union["TicTacToe", None],
         prev_point: tuple[int, int] | None,
         prev_player: SymbolType,
     ):
@@ -104,7 +104,7 @@ class TicTacToe(game.Game):
         else:
             return TicTacToe(self, target, self.curr_player())
 
-    def procedures(self) -> typing.Iterable[Callable[[], "TicTacToe"]]:
+    def procedures(self) -> Iterable[Callable[[], "TicTacToe"]]:
         def procedure(p):
             def execute():
                 return self.play(p)

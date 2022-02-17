@@ -1,12 +1,13 @@
 import random
-import game
+
+from game import Game
 
 
 class GameAI:
     def __init__(self) -> None:
         pass
 
-    def play(self, game: game.Game) -> game.Game:
+    def play(self, game: Game) -> Game:
         procedures = list(game.procedures())
 
         if procedures:
