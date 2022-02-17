@@ -52,7 +52,7 @@ class TicTacToe:
                             self.__curr_state = TicTacToe.Win(states[0], [strat])
             if isinstance(self.__curr_state, TicTacToe.InProgress) and all(
                 board[p] != EMPTY_CELL for p in board
-            ) == len(board):
+            ):
                 self.__curr_state = TicTacToe.Draw()
 
     @staticmethod
