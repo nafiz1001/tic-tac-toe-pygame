@@ -44,7 +44,7 @@ class TicTacToe(Game):
         self.__curr_state = TicTacToe.InProgress()
         self.__hash = hash(
             (
-                *sorted(ttt.point_added() for ttt in self.rev_path()),
+                *sorted(ttt.point_added() for ttt in self.__rev_path()),
                 self.curr_player(),
             )
         )
@@ -73,7 +73,7 @@ class TicTacToe(Game):
             EMPTY_CELL,
         )
 
-    def rev_path(self):
+    def __rev_path(self):
         ttt = self
         while ttt and ttt.__prev_point and ttt.__prev_player != EMPTY_CELL:
             yield ttt
@@ -81,7 +81,7 @@ class TicTacToe(Game):
 
     def curr_board(self):
         board = dict(EMPTY_BOARD)
-        board.update({ttt.__prev_point: ttt.__prev_player for ttt in self.rev_path()})
+        board.update({ttt.__prev_point: ttt.__prev_player for ttt in self.__rev_path()})
 
         return board
 
@@ -95,7 +95,7 @@ class TicTacToe(Game):
         return self.__prev_point
 
     def __repr__(self) -> str:
-        games = reversed(list(self.rev_path()))
+        games = reversed(list(self.__rev_path()))
         to_symbol = {X: "X", O: "O"}
         return "TicTacToe: " + " -> ".join(
             f"{to_symbol[g.__prev_player]}{g.__prev_point}" for g in games
