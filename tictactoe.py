@@ -93,7 +93,7 @@ class TicTacToe(Game):
         games = reversed(list(self.rev_path()))
         to_symbol = {X: "X", O: "O"}
         return "TicTacToe: " + " -> ".join(
-            f"{to_symbol[g.__prev_player]}:{g.__prev_point}" for g in games
+            f"{to_symbol[g.__prev_player]}{g.__prev_point}" for g in games
         )
 
     def __hash__(self) -> int:
