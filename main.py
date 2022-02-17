@@ -5,7 +5,7 @@ import ai
 import random
 
 ttt = tictactoe.TicTacToe.new()
-tttai = ai.GameAI()
+tttai = ai.AI()
 tttai_symbol = random.choice(tictactoe.PLAYERS)
 
 pygame.init()

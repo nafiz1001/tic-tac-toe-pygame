@@ -3,7 +3,7 @@ import random
 from game import Game
 
 
-class GameAI:
+class AI:
     def __init__(self) -> None:
         pass
 
