@@ -129,6 +129,9 @@ class TicTacToe(Game):
         else:
             return (0, 0)
 
+    def __hash__(self) -> int:
+        return hash(tuple(ttt.__prev_point for ttt in self.rev_path()))
+
     class InProgress:
         def __init__(self) -> None:
             pass
