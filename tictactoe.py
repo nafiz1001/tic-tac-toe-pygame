@@ -1,9 +1,9 @@
 import typing
 
 SymbolType = int
-EMPTY_CELL: SymbolType = 0
-X: SymbolType = 1
-O: SymbolType = 2
+EMPTY_CELL = SymbolType(0)
+X = SymbolType(1)
+O = SymbolType(2)
 PLAYERS = [X, O]
 
 EMPTY_BOARD = {(x, y): EMPTY_CELL for y in range(3) for x in range(3)}
