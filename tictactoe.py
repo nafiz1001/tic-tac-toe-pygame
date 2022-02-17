@@ -81,6 +81,9 @@ class TicTacToe:
     def curr_state(self):
         return self.__curr_state
 
+    def point_added(self):
+        return self.__prev_point
+
     def play(self, target: tuple[int, int]):
         board = self.curr_board()
         if board[target] in PLAYERS:
