@@ -1,38 +1,30 @@
 import random
-import tictactoe
+import game
 
 
-class TicTacToeAI:
+class GameAI:
     def __init__(self) -> None:
         pass
 
-    def play(self, ttt: tictactoe.TicTacToe):
-        symbol = ttt.curr_player()
-        open_points = [
-            p for p, s in ttt.curr_board().items() if s == tictactoe.EMPTY_CELL
-        ]
+    def play(self, game: game.Game) -> game.Game:
+        procedures = list(game.procedures())
 
-        if open_points:
-            evaluations = [0] * len(open_points)
-            indices = list(range(1, len(evaluations)))
+        if procedures:
+            index = game.evaluation_index()
+            evaluations = [0] * len(procedures)
 
-            for i, op in enumerate(open_points):
-                path = [op] + [p for p in open_points if p != op]
+            for i, procedure in enumerate(procedures):
+                newgame = procedure()
+
                 for _ in range(100):
-                    random.shuffle(indices)
-                    for a, b in zip(indices[:-1], indices[1:]):
-                        path[a], path[b] = path[b], path[a]
+                    newnewgame = newgame
+                    newnewprocedures = list(newnewgame.procedures())
 
-                    newttt = ttt
-                    for p in path:
-                        newttt = newttt.play(p)
+                    while newnewprocedures:
+                        newnewgame = random.choice(newnewprocedures)()
+                        newnewprocedures = list(newnewgame.procedures())
 
-                    res = newttt.curr_state()
-                    if isinstance(res, tictactoe.TicTacToe.Win):
-                        if res.player == symbol:
-                            evaluations[i] += len(res.strats)
-                        else:
-                            evaluations[i] -= len(res.strats)
+                    evaluations[i] += newnewgame.evaluation()[index]
 
-            best, _ = max(zip(open_points, evaluations), key=lambda x: x[1])
-            return best
+            best_index, _ = max(enumerate(evaluations), key=lambda x: x[1])
+            return procedures[best_index]()

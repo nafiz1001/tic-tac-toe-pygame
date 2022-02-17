@@ -5,7 +5,7 @@ import ai
 import random
 
 ttt = tictactoe.TicTacToe.new()
-tttai = ai.TicTacToeAI()
+tttai = ai.GameAI()
 tttai_symbol = random.choice(tictactoe.PLAYERS)
 
 pygame.init()
@@ -37,7 +37,12 @@ while True:
             if symbol != tttai_symbol and mouseup:
                 cellpos = board.pos_to_cell(*pygame.mouse.get_pos())
             elif symbol == tttai_symbol:
-                cellpos = tttai.play(ttt)
+
+                def cast(g) -> tictactoe.TicTacToe:
+                    return g
+
+                newgame = cast(tttai.play(ttt))
+                cellpos = newgame.point_added()
 
             if cellpos:
                 newttt = ttt.play(cellpos)
