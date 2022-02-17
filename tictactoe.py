@@ -42,6 +42,7 @@ class TicTacToe(Game):
         self.__prev_player = prev_player
         self.__curr_player = [X, O, X][self.__prev_player]
         self.__curr_state = TicTacToe.InProgress()
+        self.__hash = hash(tuple(ttt.__prev_point for ttt in self.rev_path()))
 
         if self.__prev_ttt and self.__prev_point and self.__prev_player != EMPTY_CELL:
             board = self.curr_board()
@@ -130,7 +131,7 @@ class TicTacToe(Game):
             return (0, 0)
 
     def __hash__(self) -> int:
-        return hash(tuple(ttt.__prev_point for ttt in self.rev_path()))
+        return self.__hash
 
     class InProgress:
         def __init__(self) -> None:
