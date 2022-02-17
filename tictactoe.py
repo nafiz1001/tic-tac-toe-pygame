@@ -96,6 +96,9 @@ class TicTacToe(Game):
             f"{to_symbol[g.__prev_player]}:{g.__prev_point}" for g in games
         )
 
+    def __hash__(self) -> int:
+        return self.__hash
+
     def play(self, target: tuple[int, int]):
         board = self.curr_board()
         if board[target] in PLAYERS:
@@ -129,9 +132,6 @@ class TicTacToe(Game):
                 return (-len(state.strats), len(state.strats))
         else:
             return (0, 0)
-
-    def __hash__(self) -> int:
-        return self.__hash
 
     class InProgress:
         def __init__(self) -> None:
