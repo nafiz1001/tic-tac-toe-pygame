@@ -37,7 +37,7 @@ class TicTacToe:
         self.__prev_point = prev_point
         self.__prev_player = prev_player
         self.__curr_player = [X, O, X][self.__prev_player]
-        self.__state = TicTacToe.InProgress()
+        self.__curr_state = TicTacToe.InProgress()
 
         if self.__prev_ttt and self.__prev_point and self.__prev_player != EMPTY_CELL:
             board = self.curr_board()
@@ -46,14 +46,14 @@ class TicTacToe:
                 if states[0] in PLAYERS:
                     count = states.count(states[0])
                     if count == 3:
-                        if isinstance(self.__state, TicTacToe.Win):
-                            self.__state.strats.append(strat)
+                        if isinstance(self.__curr_state, TicTacToe.Win):
+                            self.__curr_state.strats.append(strat)
                         else:
-                            self.__state = TicTacToe.Win(states[0], [strat])
-            if isinstance(self.__state, TicTacToe.InProgress) and all(
+                            self.__curr_state = TicTacToe.Win(states[0], [strat])
+            if isinstance(self.__curr_state, TicTacToe.InProgress) and all(
                 board[p] != EMPTY_CELL for p in board
             ) == len(board):
-                self.__state = TicTacToe.Draw()
+                self.__curr_state = TicTacToe.Draw()
 
     @staticmethod
     def new():
@@ -79,13 +79,13 @@ class TicTacToe:
         return self.__curr_player
 
     def curr_state(self):
-        return self.__state
+        return self.__curr_state
 
     def play(self, target: tuple[int, int]):
         board = self.curr_board()
         if board[target] in PLAYERS:
             return self
-        elif not isinstance(self.__state, TicTacToe.InProgress):
+        elif not isinstance(self.__curr_state, TicTacToe.InProgress):
             return self
         else:
             return TicTacToe(self, target, self.curr_player())
