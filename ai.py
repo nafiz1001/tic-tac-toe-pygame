@@ -7,6 +7,23 @@ class AI:
     def __init__(self) -> None:
         pass
 
+    def max_search(self, game: Game) -> Game:
+        index = game.evaluation_index()
+
+        def aux(g: Game):
+            total = 0
+            for proc in g.procedures():
+                total += aux(proc())
+            return total + g.evaluation()[index]
+
+        procedures = list(game.procedures())
+        evaluations = [0] * len(procedures)
+        for i, proc in enumerate(procedures):
+            evaluations[i] = aux(proc())
+
+        best_index, _ = max(enumerate(evaluations), key=lambda x: x[1])
+        return procedures[best_index]()
+
     def mcts(self, game: Game, max_sample: int) -> Game:
         procedures = list(game.procedures())
 
