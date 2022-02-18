@@ -81,7 +81,7 @@ class TicTacToe(Game):
 
     def curr_board(self):
         board = dict(EMPTY_BOARD)
-        board.update({ttt.__prev_point: ttt.__prev_player for ttt in self.__rev_path()})
+        board.update((ttt.__prev_point, ttt.__prev_player) for ttt in self.__rev_path())
 
         return board
 
