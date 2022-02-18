@@ -52,14 +52,12 @@ class TicTacToe(Game):
         if self.__prev_ttt and self.__prev_point and self.__prev_player != EMPTY_CELL:
             board = self.curr_board()
             for strat in STRATS[self.__prev_point]:
-                states = [board[p] for p in strat]
-                if states[0] in PLAYERS:
-                    count = states.count(states[0])
-                    if count == 3:
-                        if isinstance(self.__curr_state, TicTacToe.Win):
-                            self.__curr_state.strats.append(strat)
-                        else:
-                            self.__curr_state = TicTacToe.Win(states[0], [strat])
+                count = sum(self.__prev_player == board[p] for p in strat)
+                if count == 3:
+                    if isinstance(self.__curr_state, TicTacToe.Win):
+                        self.__curr_state.strats.append(strat)
+                    else:
+                        self.__curr_state = TicTacToe.Win(self.__prev_player, [strat])
             if isinstance(self.__curr_state, TicTacToe.InProgress) and all(
                 board[p] != EMPTY_CELL for p in board
             ):
