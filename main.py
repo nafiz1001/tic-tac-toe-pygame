@@ -41,7 +41,7 @@ while True:
                 def cast(g) -> tictactoe.TicTacToe:
                     return g
 
-                newgame = cast(tttai.play(ttt))
+                newgame = cast(tttai.mcts(ttt, 100))
                 cellpos = newgame.point_added()
 
             if cellpos:

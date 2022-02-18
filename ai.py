@@ -7,7 +7,7 @@ class AI:
     def __init__(self) -> None:
         pass
 
-    def play(self, game: Game) -> Game:
+    def mcts(self, game: Game, max_sample: int) -> Game:
         procedures = list(game.procedures())
 
         if procedures:
@@ -17,7 +17,7 @@ class AI:
             for i, procedure in enumerate(procedures):
                 newgame = procedure()
 
-                for _ in range(100):
+                for _ in range(max_sample):
                     newnewgame = newgame
                     newnewprocedures = list(newnewgame.procedures())
 
