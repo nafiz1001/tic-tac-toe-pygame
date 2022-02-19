@@ -31,85 +31,56 @@ STRATS = {
 class TicTacToe(Game):
     def __init__(
         self,
-        prev_ttt: Union["TicTacToe", None],
-        prev_point: tuple[int, int] | None,
-        prev_player: SymbolType,
+        ttt: Union["TicTacToe", None],
+        point: Union[tuple[int, int], None],
     ):
         super().__init__()
 
-        self.__prev_ttt = prev_ttt
-        self.__prev_point = prev_point
-        self.__prev_player = prev_player
-        self.__curr_player = [X, O, X][self.__prev_player]
-        self.__curr_state = TicTacToe.InProgress()
-        self.__hash = hash(
-            (
-                *sorted(ttt.point_added() for ttt in self.__rev_path()),
-                self.curr_player(),
-            )
-        )
+        self.player = PLAYERS[ttt.player % len(PLAYERS) if ttt else 0]
+        self.board = dict(ttt.board) if ttt else dict(EMPTY_BOARD)
+        self.point = point
+        self.state = TicTacToe.InProgress()
 
-        if self.__prev_ttt and self.__prev_point and self.__prev_player != EMPTY_CELL:
-            board = self.curr_board()
-            for strat in STRATS[self.__prev_point]:
-                count = sum(self.__prev_player == board[p] for p in strat)
+        if point and ttt:
+            self.board[point] = ttt.player
+            for strat in STRATS[point]:
+                count = sum(ttt.player == self.board[p] for p in strat)
                 if count == 3:
-                    if isinstance(self.__curr_state, TicTacToe.Win):
-                        self.__curr_state.strats.append(strat)
+                    if isinstance(self.state, TicTacToe.Win):
+                        self.state.strats.append(strat)
                     else:
-                        self.__curr_state = TicTacToe.Win(self.__prev_player, [strat])
-            if isinstance(self.__curr_state, TicTacToe.InProgress) and all(
-                board[p] != EMPTY_CELL for p in board
+                        self.state = TicTacToe.Win(ttt.player, [strat])
+            if isinstance(self.state, TicTacToe.InProgress) and all(
+                self.board[p] != EMPTY_CELL for p in self.board
             ):
-                self.__curr_state = TicTacToe.Draw()
+                self.state = TicTacToe.Draw()
 
     @staticmethod
     def new():
         return TicTacToe(
             None,
             None,
-            EMPTY_CELL,
         )
-
-    def __rev_path(self):
-        ttt = self
-        while ttt and ttt.__prev_point and ttt.__prev_player != EMPTY_CELL:
-            yield ttt
-            ttt = ttt.__prev_ttt
 
     def curr_board(self):
-        board = dict(EMPTY_BOARD)
-        board.update((ttt.__prev_point, ttt.__prev_player) for ttt in self.__rev_path())
-
-        return board
+        return self.board.items()
 
     def curr_player(self):
-        return self.__curr_player
+        return self.player
 
     def curr_state(self):
-        return self.__curr_state
+        return self.state
 
     def point_added(self):
-        return self.__prev_point
-
-    def __repr__(self) -> str:
-        games = reversed(list(self.__rev_path()))
-        to_symbol = {X: "X", O: "O"}
-        return "TicTacToe: " + " -> ".join(
-            f"{to_symbol[g.__prev_player]}{g.__prev_point}" for g in games
-        )
-
-    def __hash__(self) -> int:
-        return self.__hash
+        return self.point
 
     def play(self, target: tuple[int, int]):
-        board = self.curr_board()
-        if board[target] in PLAYERS:
+        if self.board[target] in PLAYERS:
             return self
-        elif not isinstance(self.__curr_state, TicTacToe.InProgress):
+        elif not isinstance(self.state, TicTacToe.InProgress):
             return self
         else:
-            return TicTacToe(self, target, self.curr_player())
+            return TicTacToe(self, target)
 
     def procedures(self) -> Iterable[Callable[[], "TicTacToe"]]:
         def procedure(p):
@@ -118,21 +89,20 @@ class TicTacToe(Game):
 
             return execute
 
-        if isinstance(self.curr_state(), TicTacToe.InProgress):
-            for p, s in self.curr_board().items():
+        if isinstance(self.state, TicTacToe.InProgress):
+            for p, s in self.board.items():
                 if s == EMPTY_CELL:
                     yield procedure(p)
 
     def evaluation_index(self) -> int:
-        return self.curr_player() - 1
+        return self.player - 1
 
     def evaluation(self) -> Sequence[int]:
-        state = self.curr_state()
-        if isinstance(state, TicTacToe.Win):
-            if state.player == X:
-                return (len(state.strats), -len(state.strats))
+        if isinstance(self.state, TicTacToe.Win):
+            if self.state.player == X:
+                return (len(self.state.strats), -len(self.state.strats))
             else:
-                return (-len(state.strats), len(state.strats))
+                return (-len(self.state.strats), len(self.state.strats))
         else:
             return (0, 0)
 
