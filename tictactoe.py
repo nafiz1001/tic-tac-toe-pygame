@@ -68,6 +68,9 @@ class TicTacToe(Game):
     def curr_player(self):
         return self.player
 
+    def curr_symbol(self):
+        return ["X", "O", "X"][self.player - 1]
+
     def curr_state(self):
         return self.state
 
