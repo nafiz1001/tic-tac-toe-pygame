@@ -1,48 +1,36 @@
 import random
+from typing import TypeVar
 
-from game import Game
+from ai_controller import AIController
+
+T = TypeVar("T")
 
 
 class AI:
-    def __init__(self) -> None:
-        pass
+    """A general purpose AI that only expects an AIController object to play the game"""
 
-    def max_search(self, game: Game) -> Game:
-        index = game.evaluation_index()
+    @staticmethod
+    def monte_carlo_method(game: AIController[T], max_player: bool, max_sample: int):
+        """Picks the next move using Monte Carlo Method"""
 
-        def aux(g: Game):
-            total = 0
-            for proc in g.procedures():
-                total += aux(proc())
-            return total + g.evaluation()[index]
+        branches = list(game.branches())
 
-        procedures = list(game.procedures())
-        evaluations = [0] * len(procedures)
-        for i, proc in enumerate(procedures):
-            evaluations[i] = aux(proc())
+        if branches:
+            evaluations = [0 for _ in branches]
 
-        best_index, _ = max(enumerate(evaluations), key=lambda x: x[1])
-        return procedures[best_index]()
-
-    def mcts(self, game: Game, max_sample: int) -> Game:
-        procedures = list(game.procedures())
-
-        if procedures:
-            index = game.evaluation_index()
-            evaluations = [0] * len(procedures)
-
-            for i, procedure in enumerate(procedures):
-                newgame = procedure()
-
+            for i, (_, next_turn) in enumerate(branches):
                 for _ in range(max_sample):
-                    newnewgame = newgame
-                    newnewprocedures = list(newnewgame.procedures())
+                    last_turn = next_turn
 
-                    while newnewprocedures:
-                        newnewgame = random.choice(newnewprocedures)()
-                        newnewprocedures = list(newnewgame.procedures())
-
-                    evaluations[i] += newnewgame.evaluation()[index]
+                    while True:
+                        sub_branches = list(last_turn.branches())
+                        if sub_branches:
+                            last_turn = random.choice(sub_branches)[1]
+                        else:
+                            evaluations[i] += last_turn.evaluation() * (
+                                1 if max_player else -1
+                            )
+                            break
 
             best_index, _ = max(enumerate(evaluations), key=lambda x: x[1])
-            return procedures[best_index]()
+            return branches[best_index][0]
