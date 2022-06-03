@@ -1,8 +1,8 @@
-import tictactoe
+import game
 import pygame
 
 
-class TicTacToeBoard:
+class Board:
     def __init__(self, surface: pygame.Surface) -> None:
         """Constructs a TicTacToeBoard instance"""
 
@@ -16,8 +16,8 @@ class TicTacToeBoard:
 
         font = pygame.font.Font(None, int(self.cellmin))
         self.symbols = {
-            tictactoe.X: font.render("X", True, (0, 0, 0xFF)),
-            tictactoe.O: font.render("O", True, (0xFF, 0, 0)),
+            game.X: font.render("X", True, (0, 0, 0xFF)),
+            game.O: font.render("O", True, (0xFF, 0, 0)),
         }
 
     def pos_to_cell(self, x: int, y: int):
