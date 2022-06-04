@@ -1,9 +1,9 @@
-import game
+import core.game as game
 import pygame
 
 
 class Board:
-    def __init__(self, surface: pygame.Surface) -> None:
+    def __init__(self, surface: pygame.surface.Surface) -> None:
         """Constructs a TicTacToeBoard instance"""
 
         self.surface = surface
@@ -36,7 +36,7 @@ class Board:
 
         return (self.cellwidth * (x + 0.5), self.cellheight * (y + 0.5))
 
-    def draw_symbol(self, x: int, y: int, symbol: str):
+    def draw_symbol(self, x: int, y: int, symbol: game.SymbolType):
         """
         Draws symbol at cell x, y.
         It draws an 'X' if the symbol is 'X'.

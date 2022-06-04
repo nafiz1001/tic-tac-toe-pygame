@@ -1,4 +1,6 @@
-from ai_controller import AIController
+from typing import Any
+from core.ai_controller import AIController
+from dataclasses import dataclass
 
 SymbolType = int
 EMPTY_CELL = SymbolType(0)
@@ -23,7 +25,7 @@ STRATS = {
     for x in range(3)
 }
 
-EMPTY_BOARD = 0
+EMPTY_BOARD = {}
 
 
 class IllegalMove(Exception):
@@ -34,16 +36,17 @@ class IllegalMove(Exception):
         self.message = args[0]
 
     def __str__(self) -> str:
-        return self.message
+        return str(self.message)
 
 
+@dataclass
 class InProgress:
     """Represents the in-progress state of the game"""
 
-    def __init__(self) -> None:
-        pass
+    pass
 
 
+@dataclass
 class Win:
     """
     Represents the winning state of the
@@ -51,16 +54,13 @@ class Win:
     the winning moves to win the game
     """
 
-    def __init__(self, player: SymbolType, strats: list[list[tuple[int, int]]]) -> None:
-        self.player = player
-        self.strats = strats
+    player: SymbolType
+    strats: list[list[tuple[int, int]]]
 
 
+@dataclass
 class Draw:
     """Represents the draw state of the game"""
-
-    def __init__(self) -> None:
-        pass
 
 
 class TicTacToe(AIController[tuple[int, int]]):
@@ -73,7 +73,6 @@ class TicTacToe(AIController[tuple[int, int]]):
         player: SymbolType = X,
         board: dict[tuple[int, int], SymbolType] = EMPTY_BOARD,
         state: Draw | InProgress | Win = InProgress(),
-        last_move: tuple[int, int] | None = None,
     ):
         """Constructs a TicTacToe instance"""
 
@@ -84,7 +83,6 @@ class TicTacToe(AIController[tuple[int, int]]):
             else board
         )
         self.state = state
-        self.last_move = last_move
 
     def get_board(self):
         """Returns the current board"""
@@ -116,7 +114,41 @@ class TicTacToe(AIController[tuple[int, int]]):
                 for y in range(3)
             ]
         )
-        return f"{self.player}\n{board}\n{self.state}\n{self.last_move}"
+        return f"{self.player}\n{board}\n{self.state}"
+
+    def to_dict(self) -> dict[str, Any]:
+        data = {}
+
+        data["player"] = self.player
+        data["board"] = [self.board[(x, y)] for y in range(3) for x in range(3)]
+
+        data["state"] = {}
+        data["state"]["state"] = self.state.__class__.__name__
+        if isinstance(self.state, Win):
+            data["state"]["player"] = self.state.player
+            data["state"]["strats"] = self.state.strats
+
+        return data
+
+    @staticmethod
+    def from_dict(data):
+        player = data["player"]
+
+        board = {}
+        for y in range(3):
+            for x in range(3):
+                i = x + y * 3
+                board[(x, y)] = data["board"][i]
+
+        states = {s.__name__: s for s in [InProgress, Draw, Win]}
+        state = states[data["state"]["state"]]
+
+        if state is Win:
+            state = Win(data["state"]["player"], data["state"]["strats"])
+        else:
+            state = state()
+
+        return TicTacToe(player, board, state)
 
     def play(self, target: tuple[int, int]):
         """
@@ -131,7 +163,6 @@ class TicTacToe(AIController[tuple[int, int]]):
             raise IllegalMove(f"The  game is not in progress")
         else:
             self.board[target] = self.player
-            self.last_move = target
 
             # determine new game state
             for strat in STRATS[target]:
@@ -156,7 +187,6 @@ class TicTacToe(AIController[tuple[int, int]]):
             player=self.player,
             board={(x, y): self.board[(x, y)] for y in range(3) for x in range(3)},
             state=self.state,
-            last_move=self.last_move,
         )
 
     def branches(self):

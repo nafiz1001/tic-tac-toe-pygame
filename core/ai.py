@@ -1,7 +1,7 @@
 import random
 from typing import TypeVar
 
-from ai_controller import AIController
+from core.ai_controller import AIController
 
 T = TypeVar("T")
 

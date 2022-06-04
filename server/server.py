@@ -4,13 +4,14 @@ import asyncio
 import json
 import os
 import secrets
-import signal
 
-import websockets
 from websockets import server
 from websockets.server import WebSocketServerProtocol
+from websockets.legacy import protocol
 
-import game as tictactoe
+import core.game as tictactoe
+
+import json
 
 VALUE = tuple[tictactoe.TicTacToe, set[WebSocketServerProtocol]]
 JOIN: dict[str, VALUE] = {}
@@ -30,22 +31,19 @@ async def error(websocket: WebSocketServerProtocol, message):
     await websocket.send(json.dumps(event))
 
 
-async def replay(websocket: WebSocketServerProtocol, game: tictactoe.TicTacToe):
+def game_data(game: tictactoe.TicTacToe):
+    data = game.to_dict()
+    return data
+
+
+async def replay(game: tictactoe.TicTacToe, connected):
     """
-    Send previous moves.
+    Broadcast all moves.
 
     """
-    # Make a copy to avoid an exception if tictactoe.moves changes while iteration
-    # is in progress. If a move is played while replay is running, moves will
-    # be sent out of order but each move will be sent once and eventually the
-    # UI will be consistent.
-    board = game.get_board()
-    event = {
-        "type": "replay",
-        "board": [board[(x, y)] for x in range(3) for y in range(3)],
-        "player": game.get_player(),
-    }
-    await websocket.send(json.dumps(event))
+    event = {"type": "replay", "data": game_data(game)}
+
+    protocol.broadcast(connected, json.dumps(event))
 
 
 async def play(
@@ -69,39 +67,15 @@ async def play(
         try:
             if player == game.get_player():
                 game.play((x, y))
-                print(str(game))
+                await replay(game, connected)
             else:
                 raise RuntimeError(
                     f"the current player is {tictactoe.TicTacToe.symbol_to_str(game.get_player())}"
                 )
-        except RuntimeError as exc:
+        except Exception as exc:
             # Send an "error" event if the move was illegal.
             await error(websocket, str(exc))
             continue
-
-        # Send a "play" event to update the UI.
-        event = {
-            "type": "play",
-            "player": player,
-            "x": x,
-            "y": y,
-        }
-        websockets.broadcast(connected, json.dumps(event))
-
-        # If move is winning, send a "win" event.
-        state = game.get_state()
-        if isinstance(state, tictactoe.Win):
-            event = {
-                "type": "win",
-                "player": state.player,
-                "strats": state.strats,
-            }
-            websockets.broadcast(connected, json.dumps(event))
-        elif isinstance(state, tictactoe.Draw):
-            event = {
-                "type": "draw",
-            }
-            websockets.broadcast(connected, json.dumps(event))
 
 
 async def start(websocket: WebSocketServerProtocol):
@@ -127,6 +101,7 @@ async def start(websocket: WebSocketServerProtocol):
             "type": "init",
             "join": join_key,
             "watch": watch_key,
+            "data": game_data(game),
         }
         await websocket.send(json.dumps(event))
         # Receive and process moves from the first player.
@@ -152,7 +127,7 @@ async def join(websocket: WebSocketServerProtocol, join_key):
     connected.add(websocket)
     try:
         # Send the first move, in case the first player already played it.
-        await replay(websocket, game)
+        await replay(game, connected)
         # Receive and process moves from the second player.
         await play(websocket, game, tictactoe.O, connected)
     finally:
