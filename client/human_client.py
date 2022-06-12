@@ -1,3 +1,4 @@
+import logging
 import sys, pygame
 import gui.board as board
 from client.client import Client
@@ -14,7 +15,7 @@ class HumanClient(Client):
             screen: an instance of a pygame.surface.Surface
         """
 
-        super().__init__(self.replay, self.error)
+        super().__init__(self.update, self.error)
         self.board = board.Board(screen)
         self.board.draw_grid()
         pygame.display.flip()
@@ -46,18 +47,18 @@ class HumanClient(Client):
         pygame.display.flip()
         return asyncio.sleep(0)
 
-    def replay(self):
+    def update(self):
         """
         Redraws the entire board keep the board to be up to date with the server.
         Draws green lines if someone won the game.
 
         Returns:
-            An asynchrous task that actually peforms the replay.
+            An asynchrous task that actually peforms update.
         """
 
         parent = super()
 
-        async def __replay():
+        async def __update():
             """
             Redraws the entire board keep the board to be up to date with the server.
             Draws green lines if someone won the game.
@@ -76,7 +77,7 @@ class HumanClient(Client):
             if isinstance(state, tictactoe.Win):
                 await self.win(state.player, state.strats)
 
-        return __replay()
+        return __update()
 
     def error(self, message):
         """
@@ -133,6 +134,8 @@ class HumanClient(Client):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     pygame.init()
     size = width, height = 500, 500
     screen = pygame.display.set_mode(size)

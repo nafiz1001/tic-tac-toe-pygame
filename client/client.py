@@ -9,20 +9,20 @@ import asyncio
 class Client:
     def __init__(
         self,
-        replay: Callable[[], None],
+        update: Callable[[], None],
         error: Callable[[str], None],
     ) -> None:
         """
         Constructs a Client
 
         Args:
-            replay: replay function
+            update: update function
             error: error function
         """
 
         self.symbol = game.O
         self.cell_pos = None
-        self.replay = replay
+        self.update = update
         self.error = error
 
         self.ttt = None
@@ -106,10 +106,10 @@ class Client:
 
                             self.ttt = game.TicTacToe.from_dict(message["data"])
                             self.symbol = game.X
-                            await self.replay()
-                        elif message["type"] == "replay":
+                            await self.update()
+                        elif message["type"] == "update":
                             self.ttt = game.TicTacToe.from_dict(message["data"])
-                            await self.replay()
+                            await self.update()
                         elif message["type"] == "error":
                             await self.error(message["message"])
                         else:

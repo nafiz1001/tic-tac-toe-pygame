@@ -12,10 +12,10 @@ class AIClient(Client):
         Constructs an AIClient
         """
 
-        super().__init__(self.replay, self.error)
+        super().__init__(self.update, self.error)
         self.ai = tictactoe_ai.AI()
 
-    def play(self):
+    def update(self):
         """
         Perform a single move
 
@@ -25,7 +25,7 @@ class AIClient(Client):
 
         parent = super()
 
-        async def __play():
+        async def __update():
             ttt = await parent.get_tictactoe()
             max_player = parent.get_symbol() == tictactoe.X
             point = self.ai.monte_carlo_method(ttt, max_player, 50)
@@ -34,17 +34,7 @@ class AIClient(Client):
             else:
                 logging.info("Game Over")
 
-        return __play()
-
-    def replay(self):
-        """
-        Equivalent to AIClient.play
-
-        Returns:
-            An asynchronous task that performs the single move
-        """
-
-        return self.play()
+        return __update()
 
     def error(self, message):
         """Returns a no-op asynchronous task
@@ -77,6 +67,8 @@ class AIClient(Client):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
     client = AIClient()
 
     args = {"join": False, "watch": False, "key": ""}

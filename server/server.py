@@ -40,12 +40,12 @@ def game_data(game: tictactoe.TicTacToe):
     return data
 
 
-async def replay(game: tictactoe.TicTacToe, connected):
+async def update(game: tictactoe.TicTacToe, connected):
     """
     Broadcast game state.
     """
 
-    event = {"type": "replay", "data": game_data(game)}
+    event = {"type": "update", "data": game_data(game)}
 
     logging.info(str(event))
 
@@ -76,7 +76,7 @@ async def play(
             # if correct player is playing
             if player == game.get_player():
                 game.play((x, y))
-                await replay(game, connected)
+                await update(game, connected)
             else:
                 raise RuntimeError(
                     f"the current player is {tictactoe.TicTacToe.symbol_to_str(game.get_player())}"
@@ -136,7 +136,7 @@ async def join(websocket: WebSocketServerProtocol, join_key):
     connected.add(websocket)
     try:
         # Send the first move, in case the first player already played it.
-        await replay(game, connected)
+        await update(game, connected)
         # Receive and process moves from the second player.
         await play(websocket, game, tictactoe.O, connected)
     finally:
@@ -159,7 +159,7 @@ async def watch(websocket: WebSocketServerProtocol, watch_key):
     connected.add(websocket)
     try:
         # Send previous moves, in case the game already started.
-        await replay(websocket, game)
+        await update(game, connected)
         # Keep the connection open, but don't receive any messages.
         await websocket.wait_closed()
     finally:
