@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# The code is a heavily modified version of this:
+# https://github.com/aaugustin/websockets/blob/286768512b0c2bd671cae0ae3e64c1545632b6d4/example/tutorial/step3/app.py
+
 import asyncio
 import json
 import os
