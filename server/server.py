@@ -59,7 +59,9 @@ async def play(
     Receive and process moves from a player.
     """
 
-    logging.info(f"Player {tictactoe.TicTacToe.symbol_to_str(player)} has joined the game!")
+    logging.info(
+        f"Player {tictactoe.TicTacToe.symbol_to_str(player)} has joined the game!"
+    )
 
     async for message in websocket:
         # Parse a "play" event from the UI.
@@ -187,7 +189,7 @@ async def handler(websocket: WebSocketServerProtocol):
 
 async def main():
     logging.basicConfig(level=logging.INFO)
-    
+
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
 

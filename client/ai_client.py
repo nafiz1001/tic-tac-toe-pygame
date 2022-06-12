@@ -68,7 +68,7 @@ class AIClient(Client):
             join: the client wants to join an existing game. Defaults to True.
             watch: the client wants to watch an existing game. Defaults to False.
             key: the key for joining or watching a game.
-        
+
         Returns:
             A Task to establish websocket connection and then use the AI to play the game.
         """

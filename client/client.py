@@ -70,7 +70,7 @@ class Client:
             join: the client wants to join an existing game. Defaults to True.
             watch: the client wants to watch an existing game. Defaults to False.
             key: the key for joining or watching a game.
-        
+
         Returns:
             A Task to establish websocket connection and then play the game.
         """
@@ -124,10 +124,11 @@ class Client:
                             "x": x,
                             "y": y,
                         }
-                        logging.info(f"{game.TicTacToe.symbol_to_str(self.symbol)} at ({x}, {y})")
+                        logging.info(
+                            f"{game.TicTacToe.symbol_to_str(self.symbol)} at ({x}, {y})"
+                        )
 
                         self.cell_pos = None
                         await websocket.send(json.dumps(event))
-
 
         return websocket_task
