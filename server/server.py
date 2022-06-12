@@ -5,9 +5,9 @@ import json
 import os
 import secrets
 
-from websockets import server
+import websockets.server as websockets_server
+import websockets.legacy.protocol as websockets_protocol
 from websockets.server import WebSocketServerProtocol
-from websockets.legacy import protocol
 
 import core.game as tictactoe
 
@@ -43,7 +43,7 @@ async def replay(game: tictactoe.TicTacToe, connected):
 
     event = {"type": "replay", "data": game_data(game)}
 
-    protocol.broadcast(connected, json.dumps(event))
+    websockets_protocol.broadcast(connected, json.dumps(event))
 
 
 async def play(
@@ -185,7 +185,7 @@ async def main():
     stop = loop.create_future()
 
     port = int(os.environ.get("PORT", "8001"))
-    async with server.serve(handler, "", port):
+    async with websockets_server.serve(handler, "", port):
         await stop
 
 
