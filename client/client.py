@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Callable
 import core.game as game
 from websockets import client
@@ -97,9 +98,12 @@ class Client:
                             websocket.recv(), timeout=0.001
                         )
                         message = json.loads(message)
-                        print(str(message))
+                        # print(str(message))
 
                         if message["type"] == "init":
+                            print(f"python -m [client module] join {message['join']}")
+                            print(f"python -m [client module] watch {message['watch']}")
+
                             self.ttt = game.TicTacToe.from_dict(message["data"])
                             self.symbol = game.X
                             await self.replay()
@@ -120,9 +124,10 @@ class Client:
                             "x": x,
                             "y": y,
                         }
+                        logging.info(f"{game.TicTacToe.symbol_to_str(self.symbol)} at ({x}, {y})")
+
                         self.cell_pos = None
                         await websocket.send(json.dumps(event))
 
-                        print(event)
 
         return websocket_task

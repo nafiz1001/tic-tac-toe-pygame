@@ -4,6 +4,7 @@ import asyncio
 import json
 import os
 import secrets
+import logging
 
 import websockets.server as websockets_server
 import websockets.legacy.protocol as websockets_protocol
@@ -27,7 +28,7 @@ async def error(websocket: WebSocketServerProtocol, message):
         "type": "error",
         "message": message,
     }
-    print(str(event))
+    logging.debug(str(event))
     await websocket.send(json.dumps(event))
 
 
@@ -43,6 +44,8 @@ async def replay(game: tictactoe.TicTacToe, connected):
 
     event = {"type": "replay", "data": game_data(game)}
 
+    logging.info(str(event))
+
     websockets_protocol.broadcast(connected, json.dumps(event))
 
 
@@ -53,7 +56,7 @@ async def play(
     Receive and process moves from a player.
     """
 
-    print(f"Player {tictactoe.TicTacToe.symbol_to_str(player)} has joined the game!")
+    logging.info(f"Player {tictactoe.TicTacToe.symbol_to_str(player)} has joined the game!")
 
     async for message in websocket:
         # Parse a "play" event from the UI.
@@ -62,7 +65,7 @@ async def play(
         x = event["x"]
         y = event["y"]
 
-        print(event)
+        logging.info(event)
 
         try:
             # if correct player is playing
@@ -180,7 +183,8 @@ async def handler(websocket: WebSocketServerProtocol):
 
 
 async def main():
-    # Set the stop condition when receiving SIGTERM.
+    logging.basicConfig(level=logging.INFO)
+    
     loop = asyncio.get_running_loop()
     stop = loop.create_future()
 

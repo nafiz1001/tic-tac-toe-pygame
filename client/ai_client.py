@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import sys
 import core.game as tictactoe
 import core.ai as tictactoe_ai
@@ -31,7 +32,7 @@ class AIClient(Client):
             if point:
                 parent.set_cell_pos(point)
             else:
-                print("game is over?")
+                logging.info("Game Over")
 
         return __play()
 
