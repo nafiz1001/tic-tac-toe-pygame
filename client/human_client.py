@@ -7,25 +7,62 @@ import asyncio
 
 class HumanClient(Client):
     def __init__(self, screen: pygame.surface.Surface) -> None:
+        """
+        Constructrs a HumanClient
+
+        Args:
+            screen: an instance of a pygame.surface.Surface
+        """
+
         super().__init__(self.replay, self.error)
         self.board = board.Board(screen)
         self.board.draw_grid()
         pygame.display.flip()
 
     def update_cell_pos(self):
+        """
+        Sets the next cell to the position of the mouse in the surface
+        specified in the constructor.
+        """
+
         cell_pos = self.board.pos_to_cell(*pygame.mouse.get_pos())
         super().set_cell_pos(cell_pos)
 
-    def win(self, winner, strats):
+    def win(self, winner: tictactoe.SymbolType, strats: list[list[tuple[int, int]]]):
+        """
+        Called when someone won a game of Tic-Tac-Toe.
+        Draws green lines across winning moves.
+
+        Args:
+            winner: the winning player
+            strats: the winning moves as a list of list of points set by the winning player
+
+        Returns:
+            A no-op asynchronous task
+        """
+
         for points in strats:
             self.board.draw_line(points[0], points[-1])
         pygame.display.flip()
         return asyncio.sleep(0)
 
     def replay(self):
+        """
+        Redraws the entire board keep the board to be up to date with the server.
+        Draws green lines if someone won the game.
+
+        Returns:
+            An asynchrous task that actually peforms the replay.
+        """
+
         parent = super()
 
         async def __replay():
+            """
+            Redraws the entire board keep the board to be up to date with the server.
+            Draws green lines if someone won the game.
+            """
+
             ttt = await parent.get_tictactoe()
 
             curr_board = ttt.get_board()
@@ -42,10 +79,33 @@ class HumanClient(Client):
         return __replay()
 
     def error(self, message):
+        """
+        Indicate to the user the error between the client and server.
+
+        Args:
+            message: error message
+
+        Returns:
+            A no-op asynchronous task.
+        """
+
         print(message)
         return asyncio.sleep(0)
 
     def start(self, uri, *, join=True, watch=False, key=""):
+        """
+        Establish connection with the server and allow the user to play a game of Tic-Tac-Toe with GUI.
+
+        Args:
+            uri: URI of the websocket server
+            join: the client wants to join an existing game. Defaults to True.
+            watch: the client wants to watch an existing game. Defaults to False.
+            key: the key for joining or watching a game.
+
+        Returns:
+            A Task to establish websocket connection and then allow the user to play the game.
+        """
+
         websocket_task = super().start(uri, join=join, watch=watch, key=key)
 
         async def human_task():

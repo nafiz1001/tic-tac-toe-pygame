@@ -117,6 +117,12 @@ class TicTacToe(AIController[tuple[int, int]]):
         return f"{self.player}\n{board}\n{self.state}"
 
     def to_dict(self) -> dict[str, Any]:
+        """Converts Tic-Tac-Toe Game to a JSON-compliant dict
+
+        Returns:
+            JSON-compliant dict
+        """
+
         data = {}
 
         data["player"] = self.player
@@ -132,6 +138,15 @@ class TicTacToe(AIController[tuple[int, int]]):
 
     @staticmethod
     def from_dict(data):
+        """Converts dict to a Tic-Tac-Toe Game
+
+        Args:
+            data: a dict that contains the same set of keys and value types as the dict returned by to_dict.
+
+        Returns:
+            a Tic-Tac-Toe Game
+        """
+
         player = data["player"]
 
         board = {}

@@ -21,8 +21,8 @@ WATCH: dict[str, VALUE] = {}
 async def error(websocket: WebSocketServerProtocol, message):
     """
     Send an error message.
-
     """
+
     event = {
         "type": "error",
         "message": message,
@@ -38,9 +38,9 @@ def game_data(game: tictactoe.TicTacToe):
 
 async def replay(game: tictactoe.TicTacToe, connected):
     """
-    Broadcast all moves.
-
+    Broadcast game state.
     """
+
     event = {"type": "replay", "data": game_data(game)}
 
     protocol.broadcast(connected, json.dumps(event))
@@ -51,8 +51,8 @@ async def play(
 ):
     """
     Receive and process moves from a player.
-
     """
+
     print(f"Player {tictactoe.TicTacToe.symbol_to_str(player)} has joined the game!")
 
     async for message in websocket:
@@ -65,6 +65,7 @@ async def play(
         print(event)
 
         try:
+            # if correct player is playing
             if player == game.get_player():
                 game.play((x, y))
                 await replay(game, connected)
@@ -80,10 +81,10 @@ async def play(
 
 async def start(websocket: WebSocketServerProtocol):
     """
-    Handle a connection from the first player: start a new tictactoe.
-
+    Handle a connection from the first player: start a new game.
     """
-    # Initialize a Connect Four game, the set of WebSocket connections
+
+    # Initialize a Tic-Tac-Toe game, the set of WebSocket connections
     # receiving moves from this game, and secret access tokens.
     game = tictactoe.TicTacToe()
     connected = {websocket}
@@ -113,17 +114,17 @@ async def start(websocket: WebSocketServerProtocol):
 
 async def join(websocket: WebSocketServerProtocol, join_key):
     """
-    Handle a connection from the second player: join an existing tictactoe.
-
+    Handle a connection from the second player: join an existing game.
     """
-    # Find the Connect Four tictactoe.
+
+    # Find the Tic-Tac-Toe game.
     try:
         game, connected = JOIN[join_key]
     except KeyError:
         await error(websocket, "Game not found.")
         return
 
-    # Register to receive moves from this tictactoe.
+    # Register to receive moves from this game.
     connected.add(websocket)
     try:
         # Send the first move, in case the first player already played it.
@@ -136,17 +137,17 @@ async def join(websocket: WebSocketServerProtocol, join_key):
 
 async def watch(websocket: WebSocketServerProtocol, watch_key):
     """
-    Handle a connection from a spectator: watch an existing tictactoe.
-
+    Handle a connection from a spectator: watch an existing game.
     """
-    # Find the Connect Four tictactoe.
+
+    # Find the Tic-Tac-Toe game.
     try:
         game, connected = WATCH[watch_key]
     except KeyError:
         await error(websocket, "Game not found.")
         return
 
-    # Register to receive moves from this tictactoe.
+    # Register to receive moves from this game.
     connected.add(websocket)
     try:
         # Send previous moves, in case the game already started.
@@ -160,21 +161,21 @@ async def watch(websocket: WebSocketServerProtocol, watch_key):
 async def handler(websocket: WebSocketServerProtocol):
     """
     Handle a connection and dispatch it according to who is connecting.
-
     """
+
     # Receive and parse the "init" event from the UI.
     message = await websocket.recv()
     event = json.loads(message)
     assert event["type"] == "init"
 
     if "join" in event:
-        # Second player joins an existing tictactoe.
+        # Second player joins an existing game.
         await join(websocket, event["join"])
     elif "watch" in event:
-        # Spectator watches an existing tictactoe.
+        # Spectator watches an existing game.
         await watch(websocket, event["watch"])
     else:
-        # First player starts a new tictactoe.
+        # First player starts a new game.
         await start(websocket)
 
 
