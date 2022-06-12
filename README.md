@@ -8,13 +8,13 @@ Python version: $\geq$ 3.10
 pip install -r requirements.txt
 ```
 
-## Server
+## Websocket Server
 
 ```
 python -m server.server
 ```
 
-## Clients
+## Websocket Clients
 
 ### Human
 
