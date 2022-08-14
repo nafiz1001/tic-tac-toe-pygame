@@ -5,13 +5,13 @@ Python version: $\geq$ 3.10
 ## Install Dependencies
 
 ```
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ## Websocket Server
 
 ```
-python -m server.server
+$ python -m server.server
 ```
 
 ## Websocket Clients
@@ -33,13 +33,13 @@ python -m [client module] watch pEkWey_bJ1FGEz47
 #### Player 2
 
 ```
-python -m client.human_client join OTTSLMEsH_4OsdOx
+$ python -m client.human_client join OTTSLMEsH_4OsdOx
 ```
 
 #### Viewers
 
 ```
-python -m client.human_client watch pEkWey_bJ1FGEz47
+$ python -m client.human_client watch pEkWey_bJ1FGEz47
 ```
 
 ### AI
@@ -47,7 +47,7 @@ python -m client.human_client watch pEkWey_bJ1FGEz47
 #### Player 1
 
 ```
-python -m client.ai_client
+$ python -m client.ai_client
 python -m [client module] join OznxKrphQtx-U7wx
 python -m [client module] watch 0-ju7REjid--s1h7
 ```
@@ -55,7 +55,7 @@ python -m [client module] watch 0-ju7REjid--s1h7
 #### Player 2
 
 ```
-python -m client.ai_client join OznxKrphQtx
+$ python -m client.ai_client join OznxKrphQtx
 ```
 
 ## Flexibility
