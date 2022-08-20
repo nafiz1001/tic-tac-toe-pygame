@@ -23,7 +23,7 @@ $ python -m server.server
 #### Player 1
 
 ```
-python -m client.human_client
+$ python -m client.human_client
 pygame 2.1.2 (SDL 2.0.16, Python 3.10.4)
 Hello from the pygame community. https://www.pygame.org/contribute.html
 python -m [client module] join OTTSLMEsH_4OsdOx
