@@ -16,9 +16,9 @@ $ python -m server.server
 
 ## Websocket Clients
 
-### Human
-
 ![human client example](./human_tictactoe.png)
+
+### Human
 
 #### Player 1
 
